@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:news_app/helper/data.dart';
+import 'package:news_app/helper/saveAndFetchSharedPrefs.dart';
+import 'package:news_app/helper/widgetStyle.dart';
 import 'package:news_app/models/ArticleModel.dart';
 import 'package:news_app/models/category_model.dart';
 import 'package:news_app/helper/news.dart';
@@ -80,12 +82,13 @@ class _HomeState extends State<Home> {
                   shrinkWrap: true,
                   physics: ClampingScrollPhysics(),
                   itemBuilder: (context, index){
-                    return BlogTile(
-                      imageUrl: articles[index].urlToImage,
-                      title: articles[index].title,
-                      desc: articles[index].description,
-                      url:articles[index].url
+                    return  BlogTile(
+                        imageUrl: articles[index].urlToImage,
+                        title: articles[index].title,
+                        desc: articles[index].description,
+                        url:articles[index].url,
                     );
+
                   },
                 ),
               )
@@ -139,16 +142,28 @@ class CategoryTile extends StatelessWidget {
   }
 }
 
-class BlogTile extends StatelessWidget {
-  final String imageUrl, title, desc, url;
+
+
+class BlogTile extends StatefulWidget {
+
+  String imageUrl, title, desc, url;
   BlogTile({@required this.imageUrl, @required this.title, @required this.desc, @required this.url});
+
+  @override
+  _BlogTileState createState() => _BlogTileState();
+}
+
+class _BlogTileState extends State<BlogTile> {
   @override
   Widget build(BuildContext context) {
+
     return GestureDetector(
       onTap: (){
+
+       // SharedPrefs.saveIsReadInSharedPrefs( );
         Navigator.push(context, MaterialPageRoute(
           builder: (context)=>ArticleView(
-          blogUrl: url,
+          blogUrl: widget.url,
           )
         ));
       },
@@ -158,20 +173,42 @@ class BlogTile extends StatelessWidget {
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(6),
-                child: Image.network(imageUrl)),
-            Text(title, style: TextStyle(
-              fontSize: 17,
-              color: Colors.black87,
-              fontWeight: FontWeight.w100
-
-            ),),
+                child: Image.network(widget.imageUrl)),
+            Text(widget.title, style:getTextStyle()),
             SizedBox(height: 8,),
-            Text(desc, style: TextStyle(
+            Text(widget.desc, style: TextStyle(
               color: Colors.grey
             ),)
           ],
         ),
       ),
     );
+  }
+
+  getLoggedInState() async {
+    await SharedPrefs.getIsReadSharedPrefs().then((value) {
+      setState(() {
+        //widget._getIsRead = value;
+      });
+    });
+  }
+
+  TextStyle getTextStyle()
+  {
+    getLoggedInState();
+    if(true){
+      return TextStyle(
+        fontSize: 17,
+        color: Colors.black87,
+        fontWeight: FontWeight.w100,
+      );
+    }
+    else{
+      return TextStyle(
+        fontSize: 17,
+        color: Colors.black87,
+        fontWeight: FontWeight.w700,
+      );
+    }
   }
 }
