@@ -41,7 +41,7 @@ class _CategoryNewsState extends State<CategoryNews> {
         actions: <Widget>[
           Opacity(
               opacity: 0,
-              child: Container( padding: EdgeInsets.symmetric(horizontal: 16),child: Icon(Icons.save)))
+              child: Container(padding: EdgeInsets.symmetric(horizontal: 16),child: Icon(Icons.save)))
         ],
       ),
       body: _loading? Center(

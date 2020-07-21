@@ -20,6 +20,7 @@ class _HomeState extends State<Home> {
   List<CategoryModel> categories = new List<CategoryModel>();
   List<ArticleModel> articles = new List<ArticleModel>();
   bool _loading = true;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -36,6 +37,7 @@ class _HomeState extends State<Home> {
       _loading = false;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,19 +50,19 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      body: _loading? Center(
+      body: _loading ? Center(
         child: Container(
           child: CircularProgressIndicator(),
         ),
       )
           :SingleChildScrollView(
             child: Container(
-        child: Column(
+            child: Column(
             children: <Widget>[
               /// Categories
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16),
-                height: 70,
+                height: 80,
                 child: ListView.builder(
                   itemCount: categories.length,
                   shrinkWrap: true,
@@ -82,23 +84,24 @@ class _HomeState extends State<Home> {
                   shrinkWrap: true,
                   physics: ClampingScrollPhysics(),
                   itemBuilder: (context, index){
-                    return  BlogTile(
+                    return BlogTile(
                         imageUrl: articles[index].urlToImage,
                         title: articles[index].title,
                         desc: articles[index].description,
                         url:articles[index].url,
                     );
-
                   },
                 ),
               )
             ],
         ),
       ),
-          ),
+      ),
     );
   }
 }
+
+
 class CategoryTile extends StatelessWidget {
   final imageUrl, categoryName;
   CategoryTile({this.imageUrl, this.categoryName});
@@ -113,7 +116,7 @@ class CategoryTile extends StatelessWidget {
         ));
       },
       child: Container(
-        margin: EdgeInsets.only(right: 16),
+        margin: EdgeInsets.only(top: 16,right: 16),
         child: Stack(
           children: <Widget>[
             ClipRRect(
@@ -143,10 +146,10 @@ class CategoryTile extends StatelessWidget {
 }
 
 
-
 class BlogTile extends StatefulWidget {
 
-  String imageUrl, title, desc, url;
+  final String imageUrl, title, desc, url;
+
   BlogTile({@required this.imageUrl, @required this.title, @required this.desc, @required this.url});
 
   @override
@@ -154,13 +157,33 @@ class BlogTile extends StatefulWidget {
 }
 
 class _BlogTileState extends State<BlogTile> {
+  bool isRead = false;
+
+  @override
+  void initState() {
+    getReadStatus(widget.url);
+    super.initState();
+  }
+
+  saveReadStatus(String url){
+    SharedPrefs.saveIsReadInSharedPrefs(widget.url, true);
+  }
+
+  getReadStatus(String url) async {
+    await SharedPrefs.getIsReadSharedPrefs(widget.url).then((val) {
+      setState(() {
+        isRead = val;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
     return GestureDetector(
       onTap: (){
-
-       // SharedPrefs.saveIsReadInSharedPrefs( );
+        saveReadStatus(widget.url);
+        getReadStatus(widget.url);
         Navigator.push(context, MaterialPageRoute(
           builder: (context)=>ArticleView(
           blogUrl: widget.url,
@@ -174,7 +197,10 @@ class _BlogTileState extends State<BlogTile> {
             ClipRRect(
               borderRadius: BorderRadius.circular(6),
                 child: Image.network(widget.imageUrl)),
-            Text(widget.title, style:getTextStyle()),
+            Text(
+                widget.title,
+                style: readNewsStyle(isRead)
+            ),
             SizedBox(height: 8,),
             Text(widget.desc, style: TextStyle(
               color: Colors.grey
@@ -185,28 +211,18 @@ class _BlogTileState extends State<BlogTile> {
     );
   }
 
-  getLoggedInState() async {
-    await SharedPrefs.getIsReadSharedPrefs().then((value) {
-      setState(() {
-        //widget._getIsRead = value;
-      });
-    });
-  }
-
-  TextStyle getTextStyle()
-  {
-    getLoggedInState();
-    if(true){
+  TextStyle readNewsStyle(bool readStatus) {
+    if(readStatus == true){
       return TextStyle(
         fontSize: 17,
-        color: Colors.black87,
-        fontWeight: FontWeight.w100,
+        color: Colors.blue,
+        fontWeight: FontWeight.w700,
       );
     }
     else{
       return TextStyle(
         fontSize: 17,
-        color: Colors.black87,
+        color: Colors.black,
         fontWeight: FontWeight.w700,
       );
     }
