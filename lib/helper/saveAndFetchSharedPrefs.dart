@@ -1,16 +1,17 @@
 import 'package:news_app/models/ArticleModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 class SharedPrefs{
   static String isTapOnNewsTile = "isTap";
-  /// saving data in shared prefs.
-  static Future<bool> saveIsReadInSharedPrefs(ArticleModel model) async{
+
+  static Future<bool> saveIsReadInSharedPrefs(String url, bool status) async{
     SharedPreferences prefs =await SharedPreferences.getInstance();
-    return await prefs.setBool(isTapOnNewsTile, true);
+    return await prefs.setBool(url, status);
   }
-  /// Getting data from shared prefs.
-  static Future<bool> getIsReadSharedPrefs() async{
+
+  static Future<bool> getIsReadSharedPrefs(String url) async{
     SharedPreferences prefs =await SharedPreferences.getInstance();
-    return await prefs.getBool(isTapOnNewsTile);
+    return await prefs.getBool(url);
   }
 
 }
