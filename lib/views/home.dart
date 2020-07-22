@@ -174,7 +174,7 @@ class _BlogTileState extends State<BlogTile> {
             ClipRRect(
               borderRadius: BorderRadius.circular(6),
                 child: Image.network(widget.imageUrl)),
-            Text(widget.title, style:getTextStyle()),
+            Text(widget.title, style:DarkMode.darkModeHeadlineTextStyle()),
             SizedBox(height: 8,),
             Text(widget.desc, style: TextStyle(
               color: Colors.grey
