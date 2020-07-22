@@ -9,6 +9,7 @@ import 'package:news_app/models/ArticleModel.dart';
 import 'package:news_app/models/category_model.dart';
 import 'package:news_app/helper/news.dart';
 import 'package:news_app/views/article_view.dart';
+import 'package:news_app/views/blog_tile.dart';
 
 import 'category_view.dart';
 class Home extends StatefulWidget {
@@ -47,6 +48,44 @@ class _HomeState extends State<Home> {
           children: <Widget>[
             Text("Flutter"),
             Text("News", style: TextStyle(color: Colors.blue),)
+          ],
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children:  <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Settings',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            Column(
+              children: <Widget>[
+                Container(
+                  child:DrawerButton(settingText: 'Notification', icon : Icons.notifications),
+                ),
+                Container(
+                  child:DrawerButton(settingText: 'Dark Mode', icon: Icons.desktop_mac),
+                ),
+                Container(
+                  child:DrawerButton(settingText: 'Bookmarks', icon: Icons.bookmark,),
+                ),
+                Container(
+                  child:DrawerButton(settingText: 'Priority', icon : Icons.priority_high),
+                ),
+                Container(
+                  child:DrawerButton(settingText: 'Calender', icon:Icons.calendar_today),
+                ),
+              ],
+            )
           ],
         ),
       ),
@@ -101,6 +140,30 @@ class _HomeState extends State<Home> {
   }
 }
 
+class DrawerButton extends StatefulWidget {
+  final String settingText;
+  final IconData icon;
+  DrawerButton({@required this.settingText, @required this.icon});
+  @override
+  _DrawerButtonState createState() => _DrawerButtonState();
+}
+
+class _DrawerButtonState extends State<DrawerButton> {
+  bool _lights = false;
+  @override
+  Widget build(BuildContext context) {
+    return SwitchListTile(
+      title:  Text(widget.settingText),
+      value: _lights,
+      onChanged: (bool value) {
+        setState(() {
+          _lights = value;
+        });
+      },
+      secondary: Icon(widget.icon),
+    );
+  }
+}
 
 class CategoryTile extends StatelessWidget {
   final imageUrl, categoryName;
@@ -145,86 +208,3 @@ class CategoryTile extends StatelessWidget {
   }
 }
 
-
-class BlogTile extends StatefulWidget {
-
-  final String imageUrl, title, desc, url;
-
-  BlogTile({@required this.imageUrl, @required this.title, @required this.desc, @required this.url});
-
-  @override
-  _BlogTileState createState() => _BlogTileState();
-}
-
-class _BlogTileState extends State<BlogTile> {
-  bool isRead = false;
-
-  @override
-  void initState() {
-    getReadStatus(widget.url);
-    super.initState();
-  }
-
-  saveReadStatus(String url){
-    SharedPrefs.saveIsReadInSharedPrefs(widget.url, true);
-  }
-
-  getReadStatus(String url) async {
-    await SharedPrefs.getIsReadSharedPrefs(widget.url).then((val) {
-      setState(() {
-        isRead = val;
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return GestureDetector(
-      onTap: (){
-        saveReadStatus(widget.url);
-        getReadStatus(widget.url);
-        Navigator.push(context, MaterialPageRoute(
-          builder: (context)=>ArticleView(
-          blogUrl: widget.url,
-          )
-        ));
-      },
-      child: Container(
-        margin: EdgeInsets.only(bottom:16),
-        child: Column(
-          children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-                child: Image.network(widget.imageUrl)),
-            Text(
-                widget.title,
-                style: readNewsStyle(isRead)
-            ),
-            SizedBox(height: 8,),
-            Text(widget.desc, style: TextStyle(
-              color: Colors.grey
-            ),)
-          ],
-        ),
-      ),
-    );
-  }
-
-  TextStyle readNewsStyle(bool readStatus) {
-    if(readStatus == true){
-      return TextStyle(
-        fontSize: 17,
-        color: Colors.blue,
-        fontWeight: FontWeight.w700,
-      );
-    }
-    else{
-      return TextStyle(
-        fontSize: 17,
-        color: Colors.black,
-        fontWeight: FontWeight.w700,
-      );
-    }
-  }
-}

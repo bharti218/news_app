@@ -8,11 +8,11 @@ class DarkMode{
     );
   }
 
-  static TextStyle darkModeHeadlineTextStyle(){
+  static TextStyle darkModeHeadlineTextStyle(Color c){
     return TextStyle(
       fontSize: 17,
-      color: Colors.white,
-      fontWeight: FontWeight.w100,
+      color: c,
+      fontWeight: FontWeight.w700,
     );
   }
 }

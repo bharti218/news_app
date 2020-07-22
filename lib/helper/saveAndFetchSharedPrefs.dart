@@ -2,7 +2,6 @@ import 'package:news_app/models/ArticleModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefs{
-  static String isTapOnNewsTile = "isTap";
 
   static Future<bool> saveIsReadInSharedPrefs(String url, bool status) async{
     SharedPreferences prefs =await SharedPreferences.getInstance();
