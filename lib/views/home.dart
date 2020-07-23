@@ -22,6 +22,8 @@ class _HomeState extends State<Home> {
   List<ArticleModel> articles = new List<ArticleModel>();
   bool _loading = true;
 
+
+
   @override
   void initState() {
     // TODO: implement initState
@@ -149,6 +151,7 @@ class DrawerButton extends StatefulWidget {
 }
 
 class _DrawerButtonState extends State<DrawerButton> {
+
   bool _lights = false;
   @override
   Widget build(BuildContext context) {
@@ -158,6 +161,7 @@ class _DrawerButtonState extends State<DrawerButton> {
       onChanged: (bool value) {
         setState(() {
           _lights = value;
+          SharedPrefs.saveIsDarkSharedPrefs(value);
         });
       },
       secondary: Icon(widget.icon),
