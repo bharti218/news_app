@@ -151,15 +151,29 @@ class DrawerButton extends StatefulWidget {
 }
 
 class _DrawerButtonState extends State<DrawerButton> {
+  bool _lights=false;
 
-  bool _lights = false;
+  getStatus(){
+    getMode();
+    return _lights;
+  }
+
+  getMode() async {
+    await SharedPrefs.getIsDarkSharedPrefs().then((val) {
+      setState(() {
+        _lights = val;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
       title:  Text(widget.settingText),
-      value: _lights,
+      value: getStatus(),
       onChanged: (bool value) {
         setState(() {
+//          getMode();
           _lights = value;
           SharedPrefs.saveIsDarkSharedPrefs(value);
         });

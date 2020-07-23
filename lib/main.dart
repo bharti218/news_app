@@ -19,7 +19,6 @@ class _MyAppState extends State<MyApp> {
   bool isDark;
 
   getStatus(){
-    print(isDark);
     getMode();
     return isDark;
   }
